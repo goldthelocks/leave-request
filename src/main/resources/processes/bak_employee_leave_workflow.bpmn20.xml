@@ -1,100 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
-	xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
-	xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
-	xmlns:flowable="http://flowable.org/bpmn" typeLanguage="http://www.w3.org/2001/XMLSchema"
-	expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
-	<process id="employeeLeaveProcess" name="My process"
-		isExecutable="true">
-		<startEvent id="startevent1" name="Start" flowable:initiator="requestorName"></startEvent>
-		<userTask id="usertask1" name="Submit Leave Request" flowable:assignee="${requestorName}"></userTask>
-		<sequenceFlow id="flow1" sourceRef="startevent1"
-			targetRef="usertask1"></sequenceFlow>
-			
-		<subProcess id="subprocess1" name="Sub Process">
-			<startEvent id="startevent2" name="Start"></startEvent>
-			<sequenceFlow id="flow3" sourceRef="startevent2"
-				targetRef="usertask2"></sequenceFlow>
-				
-			<userTask id="usertask2" name="Team Lead Review" flowable:candidateGroups="team_lead">
-				<documentation>Team Lead Review</documentation>
-				<extensionElements>
-					<activiti:taskListener event="create"
-						expression="${requestService.teamLeadReview(execution)}"></activiti:taskListener>
-				</extensionElements>
-			</userTask>
-			
-			<sequenceFlow id="flow4" sourceRef="usertask2"
-				targetRef="exclusivegateway1"></sequenceFlow>
-			<exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
-			
-			<sequenceFlow id="flow5" sourceRef="exclusivegateway1"
-				targetRef="usertask3">
-				<conditionExpression xsi:type="tFormalExpression"><![CDATA[${isApproved}]]></conditionExpression>
-			</sequenceFlow>
-			
-			<sequenceFlow id="flow17" sourceRef="exclusivegateway1"
-				targetRef="errorendevent2">
-				<extensionElements>
-					<flowable:taskListener event="task" expression="${requestService.logReject(execution)}"></flowable:taskListener>
-				</extensionElements>
-				<conditionExpression xsi:type="tFormalExpression">
-					<![CDATA[${!isApproved}]]>
-				</conditionExpression>
-			</sequenceFlow>
-			
-			<userTask id="usertask3" name="Manager Review" flowable:candidateGroups="manager">
-				<documentation>Manager Review</documentation>
-				<extensionElements>
-					<activiti:taskListener event="create"
-						expression="${requestService.managerReview(execution)}"></activiti:taskListener>
-				</extensionElements>
-			</userTask>
-			
-			<sequenceFlow id="flow9" sourceRef="usertask3"
-				targetRef="exclusivegateway2"></sequenceFlow>
-			<exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
-			<sequenceFlow id="flow15" sourceRef="exclusivegateway2"
-				targetRef="endevent4">
-				<extensionElements>
-					<flowable:taskListener event="task" expression="${requestService.logApprove(execution)}"></flowable:taskListener>
-				</extensionElements>
-				<conditionExpression xsi:type="tFormalExpression">
-					<![CDATA[${isApproved}]]>
-				</conditionExpression>
-			</sequenceFlow>
-
-			<sequenceFlow id="flow18" sourceRef="exclusivegateway2"
-				targetRef="errorendevent3">
-				<extensionElements>
-					<flowable:taskListener event="task" expression="${requestService.logReject(execution)}"></flowable:taskListener>
-				</extensionElements>
-				<conditionExpression xsi:type="tFormalExpression">
-					<![CDATA[${!isApproved}]]>
-				</conditionExpression>	
-			</sequenceFlow>
-			
-			<endEvent id="errorendevent2" name="ErrorEnd">
-				<errorEventDefinition errorRef="rejected"></errorEventDefinition>
-			</endEvent>
-
-			<endEvent id="errorendevent3" name="ErrorEnd">
-				<errorEventDefinition errorRef="rejected"></errorEventDefinition>
-			</endEvent>
-			
-			<endEvent id="endevent4" name="End"></endEvent>
-		</subProcess>
-
-	    <sequenceFlow id="flow2" sourceRef="usertask1" targetRef="subprocess1"></sequenceFlow>
-	    <sequenceFlow id="flow12" sourceRef="subprocess1" targetRef="endevent3"></sequenceFlow>
-	    <endEvent id="endevent3" name="End"></endEvent>
-	    <boundaryEvent id="boundaryerror1" name="Error" attachedToRef="subprocess1">
-	      <errorEventDefinition errorRef="rejected"></errorEventDefinition>
-	    </boundaryEvent>
-	    <sequenceFlow id="flow19" sourceRef="boundaryerror1" targetRef="endevent3"></sequenceFlow>
-    
-	</process>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" xmlns:flowable="http://flowable.org/bpmn" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
+  <process id="employeeLeaveWorkflow" name="My process" isExecutable="true">
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <userTask id="usertask1" name="Submit Leave Request" xmlns:flowable="http://flowable.org/bpmn" flowable:assignee="${requestorName}"></userTask>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="usertask1"></sequenceFlow>
+    <subProcess id="subprocess1" name="Sub Process">
+      <startEvent id="startevent2" name="Start"></startEvent>
+      <sequenceFlow id="flow3" sourceRef="startevent2" targetRef="usertask2"></sequenceFlow>
+      <userTask id="usertask2" name="Team Lead Review" xmlns:flowable="http://flowable.org/bpmn" flowable:candidateGroups="team_lead">
+        <documentation>Team Lead Review</documentation>
+        <extensionElements>
+          <activiti:taskListener event="create" expression="${requestService.teamLeadReview(execution)}"></activiti:taskListener>
+        </extensionElements>
+      </userTask>
+      <sequenceFlow id="flow4" sourceRef="usertask2" targetRef="exclusivegateway1"></sequenceFlow>
+      <exclusiveGateway id="exclusivegateway1" name="Exclusive Gateway"></exclusiveGateway>
+      <sequenceFlow id="flow5" sourceRef="exclusivegateway1" targetRef="usertask3">
+        <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isApproved}]]></conditionExpression>
+      </sequenceFlow>
+      <sequenceFlow id="flow17" sourceRef="exclusivegateway1" targetRef="errorendevent2">
+        <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!isApproved}]]></conditionExpression>
+      </sequenceFlow>
+      <userTask id="usertask3" name="Manager Review" xmlns:flowable="http://flowable.org/bpmn" flowable:candidateGroups="manager">
+        <documentation>Manager Review</documentation>
+        <extensionElements>
+          <activiti:taskListener event="create" expression="${requestService.managerReview(execution)}"></activiti:taskListener>
+        </extensionElements>
+      </userTask>
+      <sequenceFlow id="flow9" sourceRef="usertask3" targetRef="exclusivegateway2"></sequenceFlow>
+      <exclusiveGateway id="exclusivegateway2" name="Exclusive Gateway"></exclusiveGateway>
+      <sequenceFlow id="flow15" sourceRef="exclusivegateway2" targetRef="endevent4">
+        <conditionExpression xsi:type="tFormalExpression"><![CDATA[${isApproved}]]></conditionExpression>
+      </sequenceFlow>
+      <sequenceFlow id="flow18" sourceRef="exclusivegateway2" targetRef="errorendevent3">
+        <conditionExpression xsi:type="tFormalExpression"><![CDATA[${!isApproved}]]></conditionExpression>
+      </sequenceFlow>
+      <endEvent id="errorendevent2" name="ErrorEnd">
+        <errorEventDefinition errorRef="rejected"></errorEventDefinition>
+      </endEvent>
+      <endEvent id="errorendevent3" name="ErrorEnd">
+        <errorEventDefinition errorRef="rejected"></errorEventDefinition>
+      </endEvent>
+      <endEvent id="endevent4" name="End"></endEvent>
+    </subProcess>
+    <sequenceFlow id="flow2" sourceRef="usertask1" targetRef="subprocess1"></sequenceFlow>
+    <sequenceFlow id="flow12" sourceRef="subprocess1" targetRef="endevent3"></sequenceFlow>
+    <endEvent id="endevent3" name="End"></endEvent>
+    <boundaryEvent id="boundaryerror2" name="Error" attachedToRef="subprocess1">
+      <errorEventDefinition></errorEventDefinition>
+    </boundaryEvent>
+    <sequenceFlow id="flow20" sourceRef="boundaryerror2" targetRef="endevent3"></sequenceFlow>
+  </process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_employeeLeaveWorkflow">
     <bpmndi:BPMNPlane bpmnElement="employeeLeaveWorkflow" id="BPMNPlane_employeeLeaveWorkflow">
       <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
@@ -130,7 +86,7 @@
       <bpmndi:BPMNShape bpmnElement="endevent4" id="BPMNShape_endevent4">
         <omgdc:Bounds height="35.0" width="35.0" x="762.0" y="164.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="boundaryerror1" id="BPMNShape_boundaryerror2">
+      <bpmndi:BPMNShape bpmnElement="boundaryerror2" id="BPMNShape_boundaryerror2">
         <omgdc:Bounds height="30.0" width="30.0" x="723.0" y="358.0"></omgdc:Bounds>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape bpmnElement="endevent3" id="BPMNShape_endevent3">
@@ -179,7 +135,7 @@
         <omgdi:waypoint x="853.0" y="213.0"></omgdi:waypoint>
         <omgdi:waypoint x="920.0" y="213.0"></omgdi:waypoint>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="flow19" id="BPMNEdge_flow20">
+      <bpmndi:BPMNEdge bpmnElement="flow20" id="BPMNEdge_flow20">
         <omgdi:waypoint x="753.0" y="373.0"></omgdi:waypoint>
         <omgdi:waypoint x="937.0" y="372.0"></omgdi:waypoint>
         <omgdi:waypoint x="937.0" y="231.0"></omgdi:waypoint>

@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.leave.request.constants.RequestStatusEnum;
-import com.leave.request.constants.UserRoleEnum;
+import com.leave.request.dto.RequestApprovalDto;
 import com.leave.request.model.LeaveRequest;
 import com.leave.request.repository.LeaveRequestRepository;
 import com.leave.request.util.SecurityUtil;
@@ -84,7 +84,6 @@ public class RequestServiceImpl implements RequestService {
 		Map<String, Object> variables = new HashMap<>();
 		variables.put("requestorName", leaveRequest.getCreateBy());
 		variables.put("leaveId", leaveRequest.getId());
-		variables.put("status", leaveRequest.getStatus());
 		variables.put("startDate", leaveRequest.getStartDate());
 		variables.put("endDate", leaveRequest.getEndDate());
 
@@ -111,7 +110,7 @@ public class RequestServiceImpl implements RequestService {
 		ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
 				.processInstanceId(execution.getProcessInstanceId()).singleResult();
 		String leaveId = processInstance.getBusinessKey();
-		
+
 		LeaveRequest leaveRequest = leaveRequestRepository.findOne(Long.valueOf(leaveId));
 		leaveRequest.setStatus(RequestStatusEnum.TEAM_LEAD_REVIEW.getValue());
 		leaveRequestRepository.save(leaveRequest);
@@ -122,9 +121,50 @@ public class RequestServiceImpl implements RequestService {
 		ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
 				.processInstanceId(execution.getProcessInstanceId()).singleResult();
 		String leaveId = processInstance.getBusinessKey();
-		
+
 		LeaveRequest leaveRequest = leaveRequestRepository.findOne(Long.valueOf(leaveId));
 		leaveRequest.setStatus(RequestStatusEnum.MANAGER_REVIEW.getValue());
+		leaveRequestRepository.save(leaveRequest);
+	}
+
+	@Override
+	public void approveOrReject(RequestApprovalDto requestApprovalDto) {
+		Task task = taskService.createTaskQuery().taskId(requestApprovalDto.getTaskId()).includeProcessVariables()
+				.singleResult();
+
+		if (task == null) {
+			logger.error("This task does not exist");
+			return;
+		}
+
+		runtimeService.setVariable(task.getExecutionId(), "isApproved", requestApprovalDto.getIsApproved());
+		taskService.setAssignee(task.getId(), SecurityUtil.getUsername());
+		taskService.addComment(task.getId(), task.getProcessInstanceId(), requestApprovalDto.getComment() != null ? requestApprovalDto.getComment() : "");
+		taskService.complete(task.getId());
+	}
+
+	@Override
+	public void logApprove(DelegateExecution execution) {
+		ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+				.processInstanceId(execution.getProcessInstanceId()).singleResult();
+		
+		String leaveId = processInstance.getBusinessKey();
+
+		LeaveRequest leaveRequest = leaveRequestRepository.findOne(Long.valueOf(leaveId));
+		leaveRequest.setStatus(RequestStatusEnum.APPROVED.getValue());
+		leaveRequestRepository.save(leaveRequest);
+	}
+
+	@Override
+	public void logReject(DelegateExecution execution) {
+		logger.info("+++logReject+++");
+		ProcessInstance processInstance = runtimeService.createProcessInstanceQuery()
+				.processInstanceId(execution.getProcessInstanceId()).singleResult();
+		
+		String leaveId = processInstance.getBusinessKey();
+
+		LeaveRequest leaveRequest = leaveRequestRepository.findOne(Long.valueOf(leaveId));
+		leaveRequest.setStatus(RequestStatusEnum.REJECTED.getValue());
 		leaveRequestRepository.save(leaveRequest);
 	}
 

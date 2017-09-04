@@ -101,6 +101,8 @@ public class RequestController {
 		logger.info("+++approve request+++");
 		logger.info("+++form: " + requestApprovalDto.toString());
 		
+		requestApprovalDto.setIsApproved(true);
+		requestService.approveOrReject(requestApprovalDto);
 		redirectAttributes.addFlashAttribute("requestReviewed", "Done! Request has been approved.");
 		
 		return "redirect:/home";
@@ -111,8 +113,11 @@ public class RequestController {
 			BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
 		logger.info("+++reject request+++");
 		
+		requestApprovalDto.setIsApproved(false);
+		requestService.approveOrReject(requestApprovalDto);
 		redirectAttributes.addFlashAttribute("requestReviewed", "Done! Request has been rejected.");
-		return "request-review";
+		
+		return "redirect:/home";
 	}
 
 }
