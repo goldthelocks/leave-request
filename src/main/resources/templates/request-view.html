@@ -31,7 +31,7 @@
                         		<div class="span5 col-md-12">
                         			<div class="panel panel-default">
                         				<div class="panel-heading">
-                        					<strong>Leave ID: <span th:text="${leaveRequest.id}"></span></strong>
+                        					<strong>Leave ID: <span id="leaveRequestId" th:text="${leaveRequest.id}"></span></strong>
                         				</div>
                         				<div class="panel-body">
                         					<div class="table-responsive">
@@ -68,7 +68,18 @@
                         					</div>
                         					<a th:href="@{/}" role="button" class="btn btn-primary">Back</a>
                         				</div>
-                        			</div>                        			                        			
+                        			</div>  
+                        			
+                        			<div class="panel panel-default">
+                        				<div class="panel-heading">
+                        					<strong>History</strong>
+                        				</div>
+                        				<div class="panel-body">
+                        					<div class="table-responsive">
+                        						<table id="historyTasks"></table>
+                        					</div>
+                        				</div>
+                        			</div>                      			                        			
                         		</div>
                         	</div>
                         </div>
@@ -124,6 +135,36 @@
 		}).on('changeDate', function(selected) {
 			var endDate = new Date(selected.date.valueOf());
 		    $('#startDate').datepicker('setEndDate', endDate);
+		});
+		
+		var leaveId = $('#leaveRequestId').text();
+		$('#historyTasks').bootstrapTable({
+			url: '/json/get-task-history/' + leaveId,
+			pagination: true,
+			pageSize: 10,
+			pageList: [10, 25, 50, 100],
+			formatNoMatches: function () {
+		        return 'No history found for this request.';
+		    },
+			columns: [{
+				field: 'name',
+				title: 'Task Name'
+			}, {
+				field: 'dateCompleted',
+				title: 'Date Completed',
+				formatter: function(value, row, index) {
+					return value == undefined ? '-' : moment(value).format("MM/DD/YYYY");
+				}
+			}, {
+				field: 'commentList',
+				title: 'Comment',
+				formatter: function(value, row, index) {
+					return value[0] == undefined ? '-' : value[0].fullMessage;
+				}
+			}, {
+				field: 'assignee',
+				title: 'Assignee'
+			}]
 		});
 	</script>
 	

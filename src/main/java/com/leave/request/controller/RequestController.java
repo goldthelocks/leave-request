@@ -3,11 +3,13 @@
  */
 package com.leave.request.controller;
 
-import java.lang.ProcessBuilder.Redirect;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.leave.request.dto.MyHistoryTask;
 import com.leave.request.dto.MyTask;
 import com.leave.request.dto.RequestApprovalDto;
 import com.leave.request.model.LeaveRequest;
@@ -71,8 +74,14 @@ public class RequestController {
 		LeaveRequest leaveRequest = requestService.findById(id);
 
 		model.addAttribute("leaveRequest", leaveRequest);
-
+		
 		return "request-view";
+	}
+	
+	@GetMapping("/json/get-task-history/{id}")
+	public ResponseEntity<List<MyHistoryTask>> getAllHistoryTask(@PathVariable("id") Long id, Model model) {
+		List<MyHistoryTask> myHistoryTask = myTaskService.getTaskHistory(String.valueOf(id));
+		return new ResponseEntity<List<MyHistoryTask>>(myHistoryTask, HttpStatus.OK);
 	}
 
 	@GetMapping("/review/{id}")

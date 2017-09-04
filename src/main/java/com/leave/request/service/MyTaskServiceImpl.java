@@ -4,17 +4,24 @@
 package com.leave.request.service;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import javax.transaction.Transactional;
 
+import org.flowable.engine.HistoryService;
 import org.flowable.engine.TaskService;
+import org.flowable.engine.history.HistoricProcessInstance;
+import org.flowable.engine.history.HistoricTaskInstance;
 import org.flowable.engine.task.Task;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.leave.request.dto.MyHistoryTask;
 import com.leave.request.dto.MyTask;
 
 /**
@@ -29,6 +36,9 @@ public class MyTaskServiceImpl implements MyTaskService {
 
 	@Autowired
 	private TaskService taskService;
+
+	@Autowired
+	private HistoryService historyService;
 
 	@Override
 	public List<MyTask> findAllTasksByUsername(String username) {
@@ -52,11 +62,11 @@ public class MyTaskServiceImpl implements MyTaskService {
 			logger.info("No task found for this id!");
 			return new MyTask();
 		}
-		
+
 		MyTask myTask = buildMyTask(task);
 		return myTask;
 	}
-	
+
 	private MyTask buildMyTask(Task task) {
 		MyTask myTask = new MyTask();
 		myTask.setId(task.getId());
@@ -67,6 +77,52 @@ public class MyTaskServiceImpl implements MyTaskService {
 		myTask.setTaskDefinitionKey(task.getTaskDefinitionKey());
 		myTask.setProcessVariables(task.getProcessVariables());
 		return myTask;
+	}
+
+	@Override
+	public List<MyHistoryTask> getTaskHistory(String leaveId) {
+		List<MyHistoryTask> historyTaskList = new ArrayList<>();
+		HistoricProcessInstance historicProcessInstance = historyService.createHistoricProcessInstanceQuery()
+				.processInstanceBusinessKey(leaveId).singleResult();
+
+		if (historicProcessInstance == null) {
+			return historyTaskList;
+		}
+
+		List<HistoricTaskInstance> historicTaskInstances = historyService.createHistoricTaskInstanceQuery()
+				.includeTaskLocalVariables().processInstanceBusinessKey(leaveId).list();
+		
+		for (HistoricTaskInstance historicTaskInstance : historicTaskInstances) {
+			MyHistoryTask myHistoryTask = buildMyHistoryTask(historicTaskInstance);
+			historyTaskList.add(myHistoryTask);
+		}
+		
+		sort(historyTaskList);
+		return historyTaskList;
+	}
+	
+	private MyHistoryTask buildMyHistoryTask(HistoricTaskInstance historicTaskInstance) {
+		MyHistoryTask myHistoryTask = new MyHistoryTask();
+		myHistoryTask.setId(historicTaskInstance.getId());
+		myHistoryTask.setName(historicTaskInstance.getName());
+		myHistoryTask.setCommentList(taskService.getTaskComments(historicTaskInstance.getId()));
+		Map<String, Object> variables = historicTaskInstance.getTaskLocalVariables();
+		myHistoryTask.setVariables(variables);
+		myHistoryTask.setDateCompleted(historicTaskInstance.getEndTime());
+		myHistoryTask.setAssignee(historicTaskInstance.getAssignee());
+		return myHistoryTask;
+	}
+	
+	private void sort(List<MyHistoryTask> historyTasks) {
+		
+		Collections.sort(historyTasks, new Comparator<MyHistoryTask>() {
+
+			@Override
+			public int compare(MyHistoryTask o1, MyHistoryTask o2) {
+				return o1.getDateCompleted().compareTo(o2.getDateCompleted());
+			}
+			
+		});
 	}
 
 }
