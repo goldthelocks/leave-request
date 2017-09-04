@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+		xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+	<title>Mawsi HR</title>
+	
+	<head th:replace="fragments/header :: header"></head>
+	
+	<body>
+	
+	<div id="wrapper">
+
+		<div th:replace="fragments/sidebar :: sidebar"></div>
+		
+        <!-- Page Content -->
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">Review Request</h1>
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                <!-- /.row -->
+                
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                        	<!-- <div class="panel-heading"></div> -->
+                        	<div class="panel-body">
+                        		<div class="span5 col-md-12">
+                        			<div class="panel panel-default">
+                        				<div class="panel-heading">
+                        					<strong>Leave ID: <span th:text="${leaveRequest.id}"></span></strong>
+                        				</div>
+                        				<div class="panel-body">
+                        					<div class="table-responsive">
+                        						<table class="table table-striped">
+                        							<thead>
+                        								<tr>
+                        									<th width="20%"></th>
+                        									<th width="80%"></th>
+                        								</tr>                        							
+                        							</thead>
+                        							<tbody>
+                        								<tr>
+                        									<td>Request Type</td>
+                        									<td th:text="${leaveRequest.requestType.name}"></td>
+                        								</tr>
+                        								<tr>
+                        									<td>Start Date</td>
+                        									<td th:text="${leaveRequest.startDate}"></td>
+                        								</tr>
+                        								<tr>
+                        									<td>End Date</td>
+                        									<td th:text="${leaveRequest.endDate}"></td>
+                        								</tr>
+                        								<tr>
+                        									<td>Reason</td>
+                        									<td th:text="${leaveRequest.reason}"></td>
+                        								</tr>
+                        								<tr>
+                        									<td>Status</td>
+                        									<td th:text="${leaveRequest.status}"></td>
+                        								</tr>
+                        							</tbody>
+                        						</table>
+                        					<a th:href="@{/manage}" role="button" class="btn btn-primary">Back</a>                        						
+                        					</div>                        					
+                        				</div>
+                        			</div>
+                        			
+                        			<div class="panel panel-default">
+                        				<div class="panel-heading">
+                        					<strong>Approve or Reject Request</strong>
+                        				</div>
+                        				<div class="panel-body">
+                        					<form autocomplete="off" action="#" th:action="@{/review/submit}" th:object="${requestApprovalForm}" method="post" role="form"
+												class="form">
+                        						<fieldset>
+                        							<div class="form-group">
+                        								<label class="control-label">Comment</label>
+                        								<textarea class="form-control" placeholder="Input comment"></textarea>
+                        							</div>
+                        							
+                        							<input type="text" th:value="${taskId}" th:field="*{taskId}"/>
+                        							<input type="text" th:value="${leaveRequest.id}" th:field="*{leaveId}"/>
+                        							
+                        							<button type="submit" name="action" value="approve" class="btn btn-primary"><span>Approve</span></button>
+													<button type="submit" name="action" value="reject" class="btn btn-primary"><span>Reject</span></button>
+                        						</fieldset>
+                        					</form>
+                        				</div>
+                        			</div>                         			                        			
+                        		</div>
+                        	</div>
+                        </div>
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                <!-- /.row --> 
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+    
+	<div th:replace="fragments/footer :: footer"></div>
+	
+	<script type="text/javascript">
+		$.getJSON('/json/all/requesttypes', function(lists) {
+			var data = [];
+			
+			lists.forEach(function (item) {
+	            var obj = {
+	                id: item.id,
+	                text: item.name
+	            };
+	
+	            data.push(obj);
+	        });
+	
+	        var options = {
+	            data: data,
+	            placeholder: "Select request type"
+	        };
+			
+			$('#request-types').select2(options);
+		});
+	
+		$('#startDate').datepicker({
+		    daysOfWeekDisabled: "0,6",
+		    autoclose: true,
+		    format: 'mm/dd/yyyy'
+		}).on('changeDate', function(selected) {
+			var startDate = new Date(selected.date.valueOf());
+		    $('#endDate').datepicker('setStartDate', startDate);
+		    $('#endDate').datepicker('update', startDate);
+		});
+		
+		$('#endDate').datepicker({
+			daysOfWeekDisabled: "0,6",
+			autoclose: true,
+			format: 'mm/dd/yyyy'
+		}).on('changeDate', function(selected) {
+			var endDate = new Date(selected.date.valueOf());
+		    $('#startDate').datepicker('setEndDate', endDate);
+		});
+	</script>
+	
+	</body>
+
+</html>

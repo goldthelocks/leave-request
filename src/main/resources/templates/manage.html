@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+		xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+	<title>Mawsi HR</title>
+	
+	<head th:replace="fragments/header :: header"></head>
+	
+	<body>
+	
+	<div id="wrapper">
+
+		<div th:replace="fragments/sidebar :: sidebar"></div>
+		
+        <!-- Page Content -->
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">Manage Employee Leaves</h1>
+                        
+                        <table id="employeeLeaves"></table>
+                        
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- /#page-wrapper -->
+
+		<div class="modal fade" id="requestModal" tabindex="-1" role="dialog" 
+			aria-labelledby="requestModalLabel" aria-hidden="true" style="display: none;">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h4 class="modal-title" id="myModalLabel">Modal title</h4>
+					</div>
+					<div class="modal-body">
+					</div>
+					<div class="modal-footer">
+                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                         <button type="button" class="btn btn-primary">Save changes</button>
+					</div>
+				</div>
+				<!-- /.modal-content -->
+			</div>
+             <!-- /.modal-dialog -->
+		</div>
+	</div>
+    <!-- /#wrapper -->
+    
+    
+	<div th:replace="fragments/footer :: footer"></div>
+	
+	<script type="text/javascript">
+		$('#employeeLeaves').bootstrapTable({
+			url: '/json/get-all-tasks',
+			pagination: true,
+			pageSize: 10,
+			pageList: [10, 25, 50, 100],
+			columns: [{
+				field: 'processVariables.leaveId',
+				title: 'Leave ID',
+				sortable: true
+			}, {
+				field: 'processVariables.requestorName',
+				title: "Requested By",
+				sortable: true
+			}, {
+				field: 'processVariables.status',
+				title: "Status",
+				sortable: true
+			}, {
+				field: 'processVariables.startDate',
+				title: 'Start Date',
+				sortable: true,
+				formatter: function(value, row, index) {
+					return value == undefined ? '-' : moment(value).format("MM/DD/YYYY");  
+				}
+			}, {
+				field: 'processVariables.endDate',
+				title: 'End Date',
+				sortable: true,
+				formatter: function(value, row, index) {
+					return value == undefined ? '-' : moment(value).format("MM/DD/YYYY");
+				}
+			}, {
+				field: 'operate',
+				title: 'Actions',
+				formatter: function(value, row, index) {
+					return '<a href="/review/' + row.id + '">View Details</a>';
+				}
+			}]
+		});
+		
+	</script>
+	</body>
+
+</html>

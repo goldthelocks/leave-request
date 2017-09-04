@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+		xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+	<title>Mawsi HR</title>
+	
+	<head th:replace="fragments/header :: header"></head>
+	
+	<body>
+	
+	<div id="wrapper">
+
+		<div th:replace="fragments/sidebar :: sidebar"></div>
+		
+        <!-- Page Content -->
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">Hello again, <span th:text="${user}"></span>!</h1>
+                        
+						<div th:if="!${#strings.isEmpty(error)}" class="alert alert-danger alert-dismissable fade in">
+							<button type="button" class="close fa-times fa" data-dismiss="alert" aria-label="close"></button>
+                     		<span th:text="${error}"></span>
+                 		</div>
+                 		
+                 		<div th:if="!${#strings.isEmpty(requestReviewed)}" class="alert alert-success alert-dismissable fade in">
+							<button type="button" class="close fa-times fa" data-dismiss="alert" aria-label="close"></button>
+                     		<span th:text="${requestReviewed}"></span>
+                 		</div>                        
+                        
+                        <table id="myLeaves"></table>
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                <!-- /.row -->
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+    
+	<div th:replace="fragments/footer :: footer"></div>
+	
+	<script type="text/javascript">
+		$('#myLeaves').bootstrapTable({
+			url: '/json/get-all-request',
+			pagination: true,
+			pageSize: 10,
+			pageList: [10, 25, 50, 100],
+			formatNoMatches: function () {
+		        return 'You have not filed any leave requests for now.';
+		    },
+			columns: [{
+				field: 'id',
+				title: 'Leave ID'
+			}, {
+				field: 'createDate',
+				title: 'Date Submitted',
+				formatter: function(value, row, index) {
+					return value == undefined ? '-' : moment(value).format("MM/DD/YYYY");
+				}
+			}, {
+				field: 'requestType.name',
+				title: 'Request Type'
+			}, {
+				field: 'status',
+				title: 'Status'
+			}, {
+				field: 'operate',
+				title: 'Actions',
+				formatter: function(value, row, index) {
+					return '<a href="/view/' + row.id + '">View Details</a>';
+				}
+			}]
+		});
+	</script>
+	</body>
+
+</html>

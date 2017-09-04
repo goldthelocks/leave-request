@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" 
+		xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+	<title>Mawsi HR</title>
+	
+	<head th:replace="fragments/header :: header"></head>
+	
+	<body>
+	
+	<div id="wrapper">
+
+		<div th:replace="fragments/sidebar :: sidebar"></div>
+		
+        <!-- Page Content -->
+        <div id="page-wrapper">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1 class="page-header">Request Leave</h1>
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                <!-- /.row -->
+                
+                <div class="row">
+                    <div class="col-lg-12">
+                        <div class="panel panel-default">
+                        	<!-- <div class="panel-heading"></div> -->
+                        	<div class="panel-body">
+                        		<div class="span5 col-md-6">
+	                        		<form autocomplete="off" action="#" th:action="@{/request}" th:object="${requestForm}" method="post" role="form"
+										class="form">	
+										<div th:if="${success}" class="alert alert-success alert-dismissable fade in">
+                                			<button type="button" class="close fa-times fa" data-dismiss="alert" aria-label="close"></button>
+                                			<span>Leave request has been submitted! You can view your pending requests <strong><a th:href="@{/}">here</a></strong>.</span>
+                            			</div>
+                            			
+	                        			<fieldset>
+	                        				<div th:class="${#fields.hasErrors('requestType') ? 'form-group  has-error' : 'form-group'}">
+	                        					<label class="control-label">Request Type</label>
+	                        					<label class="control-label" th:if="${#fields.hasErrors('requestType')}" th:errors="*{requestType}"></label>	
+	                        					<select id="request-types" name="select-roles" class="form-control" th:field="*{requestType}"></select>
+	                        				</div>
+	                        				<div th:class="${#fields.hasErrors('startDate') ? 'form-group  has-error' : 'form-group'}">
+												<label class="control-label" th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}"></label>
+		                        				<div class="input-group date">
+	  												<input type="text" class="form-control" id="startDate" th:field="*{startDate}" placeholder="Input start date"/>
+	  												<span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+												</div>
+											</div>
+											<div th:class="${#fields.hasErrors('endDate') ? 'form-group  has-error' : 'form-group'}">
+												<label class="control-label" th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}"></label>
+		                        				<div class="input-group date">
+	  												<input type="text" class="form-control" id="endDate" th:field="*{endDate}" placeholder="Input end date"/>
+	  												<span class="input-group-addon"><i class="glyphicon glyphicon-th"></i></span>
+												</div>
+											</div>
+											<div th:class="${#fields.hasErrors('reason') ? 'form-group  has-error' : 'form-group'}">
+												<label class="control-label" th:if="${#fields.hasErrors('reason')}" th:errors="*{reason}"></label>
+												<textarea class="form-control" th:field="*{reason}" placeholder="Input reason"></textarea>
+											</div>
+											
+											<input type="submit" class="btn btn-lg btn-primary btn-block" value="Submit"/>
+	                        			</fieldset>
+	                        		</form>
+                        		</div>
+                        	</div>
+                        </div>
+                    </div>
+                    <!-- /.col-lg-12 -->
+                </div>
+                <!-- /.row --> 
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- /#page-wrapper -->
+
+    </div>
+    <!-- /#wrapper -->
+    
+	<div th:replace="fragments/footer :: footer"></div>
+	
+	<script type="text/javascript">
+		$.getJSON('/json/all/requesttypes', function(lists) {
+			var data = [];
+			
+			lists.forEach(function (item) {
+	            var obj = {
+	                id: item.id,
+	                text: item.name
+	            };
+	
+	            data.push(obj);
+	        });
+	
+	        var options = {
+	            data: data,
+	            placeholder: "Select request type"
+	        };
+			
+			$('#request-types').select2(options);
+		});
+	
+		$('#startDate').datepicker({
+		    daysOfWeekDisabled: "0,6",
+		    autoclose: true,
+		    format: 'mm/dd/yyyy'
+		}).on('changeDate', function(selected) {
+			var startDate = new Date(selected.date.valueOf());
+		    $('#endDate').datepicker('setStartDate', startDate);
+		    $('#endDate').datepicker('update', startDate);
+		});
+		
+		$('#endDate').datepicker({
+			daysOfWeekDisabled: "0,6",
+			autoclose: true,
+			format: 'mm/dd/yyyy'
+		}).on('changeDate', function(selected) {
+			var endDate = new Date(selected.date.valueOf());
+		    $('#startDate').datepicker('setEndDate', endDate);
+		});
+	</script>
+	
+	</body>
+
+</html>
