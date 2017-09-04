@@ -5,7 +5,7 @@
 	xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI"
 	xmlns:flowable="http://flowable.org/bpmn" typeLanguage="http://www.w3.org/2001/XMLSchema"
 	expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.flowable.org/processdef">
-	<process id="employeeLeaveProcess" name="My process"
+	<process id="employee_leave_workflow" name="Employee Leave Workflow"
 		isExecutable="true">
 		<startEvent id="startevent1" name="Start" flowable:initiator="requestorName"></startEvent>
 		<userTask id="usertask1" name="Submit Leave Request" flowable:assignee="${requestorName}"></userTask>
@@ -20,8 +20,8 @@
 			<userTask id="usertask2" name="Team Lead Review" flowable:candidateGroups="team_lead">
 				<documentation>Team Lead Review</documentation>
 				<extensionElements>
-					<activiti:taskListener event="create"
-						expression="${requestService.teamLeadReview(execution)}"></activiti:taskListener>
+					<flowable:taskListener event="create"
+						expression="${requestService.teamLeadReview(execution)}"></flowable:taskListener>
 				</extensionElements>
 			</userTask>
 			
@@ -37,7 +37,7 @@
 			<sequenceFlow id="flow17" sourceRef="exclusivegateway1"
 				targetRef="errorendevent2">
 				<extensionElements>
-					<flowable:taskListener event="task" expression="${requestService.logReject(execution)}"></flowable:taskListener>
+					<flowable:executionListener event="end" expression="${requestService.logReject(execution)}"></flowable:executionListener>
 				</extensionElements>
 				<conditionExpression xsi:type="tFormalExpression">
 					<![CDATA[${!isApproved}]]>
@@ -47,8 +47,8 @@
 			<userTask id="usertask3" name="Manager Review" flowable:candidateGroups="manager">
 				<documentation>Manager Review</documentation>
 				<extensionElements>
-					<activiti:taskListener event="create"
-						expression="${requestService.managerReview(execution)}"></activiti:taskListener>
+					<flowable:taskListener event="create"
+						expression="${requestService.managerReview(execution)}"></flowable:taskListener>
 				</extensionElements>
 			</userTask>
 			
@@ -58,7 +58,7 @@
 			<sequenceFlow id="flow15" sourceRef="exclusivegateway2"
 				targetRef="endevent4">
 				<extensionElements>
-					<flowable:taskListener event="task" expression="${requestService.logApprove(execution)}"></flowable:taskListener>
+					<flowable:executionListener event="end" expression="${requestService.logApprove(execution)}"></flowable:executionListener>
 				</extensionElements>
 				<conditionExpression xsi:type="tFormalExpression">
 					<![CDATA[${isApproved}]]>
@@ -68,7 +68,7 @@
 			<sequenceFlow id="flow18" sourceRef="exclusivegateway2"
 				targetRef="errorendevent3">
 				<extensionElements>
-					<flowable:taskListener event="task" expression="${requestService.logReject(execution)}"></flowable:taskListener>
+					<flowable:executionListener event="end" expression="${requestService.logReject(execution)}"></flowable:executionListener>
 				</extensionElements>
 				<conditionExpression xsi:type="tFormalExpression">
 					<![CDATA[${!isApproved}]]>
