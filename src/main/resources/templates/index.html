@@ -71,11 +71,22 @@
 			}, {
 				field: 'operate',
 				title: 'Actions',
-				formatter: function(value, row, index) {
-					return '<a href="/view/' + row.id + '">View Details</a>';
-				}
+				formatter: actionFormatter
 			}]
 		});
+		
+		function actionFormatter(value, row, index) {
+			var link = '<a href="/view/' + row.id + '">View</a>';
+			
+			if (row.status !== undefined && row.status !== null && row.status !== '') {
+				if (row.status === 'Rejected') {
+					link += ' | <a href="/edit/' + row.id + '">Edit</a>';
+				}
+			}
+		
+			return link;
+		}
+		
 	</script>
 	</body>
 

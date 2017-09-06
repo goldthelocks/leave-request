@@ -17,12 +17,15 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.leave.request.constants.RequestStatusEnum;
 import com.leave.request.dto.MyHistoryTask;
 import com.leave.request.dto.MyTask;
 import com.leave.request.dto.RequestApprovalDto;
 import com.leave.request.model.LeaveRequest;
+import com.leave.request.model.RequestType;
 import com.leave.request.service.MyTaskService;
 import com.leave.request.service.RequestService;
 import com.leave.request.util.SecurityUtil;
@@ -33,6 +36,7 @@ import com.leave.request.validator.RequestValidator;
  *
  */
 @Controller
+@SessionAttributes({"requestForm"})
 public class RequestController {
 
 	private final static Logger logger = LoggerFactory.getLogger(RequestController.class);
@@ -78,6 +82,36 @@ public class RequestController {
 		return "request-view";
 	}
 	
+	@GetMapping("/edit/{id}")
+	public String requestEdit(@PathVariable("id") Long id, Model model, RedirectAttributes redirectAttributes) {
+		LeaveRequest leaveRequest = requestService.findById(id);
+		
+		if (!leaveRequest.getStatus().equals(RequestStatusEnum.REJECTED.getValue())) {
+			redirectAttributes.addFlashAttribute("error", "You are not authorized to view that page!");
+			return "redirect:/home";
+		}
+		
+		model.addAttribute("requestForm", leaveRequest);
+		return "request-edit";
+	}
+	
+	@PostMapping("/edit")
+	public String processRequestEdit(@ModelAttribute("requestForm") LeaveRequest leaveRequest, BindingResult bindingResult,
+			Model model) {
+		validator.validate(leaveRequest, bindingResult);
+
+		if (bindingResult.hasErrors()) {
+			return "request-edit";
+		}
+
+		requestService.save(leaveRequest);
+		requestService.submit(leaveRequest);
+
+		model.addAttribute("success", true);
+
+		return "request-edit";
+	}
+
 	@GetMapping("/json/get-task-history/{id}")
 	public ResponseEntity<List<MyHistoryTask>> getAllHistoryTask(@PathVariable("id") Long id, Model model) {
 		List<MyHistoryTask> myHistoryTask = myTaskService.getTaskHistory(String.valueOf(id));
