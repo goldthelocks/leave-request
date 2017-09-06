@@ -29,26 +29,6 @@
             <!-- /.container-fluid -->
         </div>
         <!-- /#page-wrapper -->
-
-		<div class="modal fade" id="requestModal" tabindex="-1" role="dialog" 
-			aria-labelledby="requestModalLabel" aria-hidden="true" style="display: none;">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-						<h4 class="modal-title" id="myModalLabel">Modal title</h4>
-					</div>
-					<div class="modal-body">
-					</div>
-					<div class="modal-footer">
-                         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                         <button type="button" class="btn btn-primary">Save changes</button>
-					</div>
-				</div>
-				<!-- /.modal-content -->
-			</div>
-             <!-- /.modal-dialog -->
-		</div>
 	</div>
     <!-- /#wrapper -->
     
@@ -61,10 +41,19 @@
 			pagination: true,
 			pageSize: 10,
 			pageList: [10, 25, 50, 100],
+			sortName: 'createTime',
+			sortOrder: 'desc',
 			columns: [{
 				field: 'processVariables.leaveId',
 				title: 'Leave ID',
 				sortable: true
+			},{
+				field: 'createTime',
+				title: 'Date Submitted',
+				sortable: true,
+				formatter: function(value, row, index) {
+					return value == undefined ? '-' : moment(value).format("MM/DD/YYYY");  
+				}
 			}, {
 				field: 'processVariables.employeeUsername',
 				title: "Requested By",

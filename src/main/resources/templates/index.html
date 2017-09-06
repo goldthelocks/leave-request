@@ -19,6 +19,12 @@
                     <div class="col-lg-12">
                         <h1 class="page-header">Hello again, <span th:text="${user}"></span>!</h1>
                         
+						<div th:if="${count > 0}" class="alert alert-info alert-dismissable fade in">
+							<button type="button" class="close fa-times fa" data-dismiss="alert" aria-label="close"></button>
+                     		There are currently <strong><span th:text="${count}"></span> requests</strong> assigned to you or your group. 
+                     		You can view them by clicking "Manage Employee Leaves".
+                 		</div>
+                        
 						<div th:if="!${#strings.isEmpty(error)}" class="alert alert-danger alert-dismissable fade in">
 							<button type="button" class="close fa-times fa" data-dismiss="alert" aria-label="close"></button>
                      		<span th:text="${error}"></span>
@@ -50,24 +56,30 @@
 			pagination: true,
 			pageSize: 10,
 			pageList: [10, 25, 50, 100],
+			sortName: 'createDate',
+			sortOrder: 'desc',
 			formatNoMatches: function () {
 		        return 'You have not filed any leave requests for now.';
 		    },
 			columns: [{
 				field: 'id',
-				title: 'Leave ID'
+				title: 'Leave ID',
+				sortable: true
 			}, {
 				field: 'createDate',
 				title: 'Date Submitted',
+				sortable: true,
 				formatter: function(value, row, index) {
 					return value == undefined ? '-' : moment(value).format("MM/DD/YYYY");
 				}
 			}, {
 				field: 'requestType.name',
-				title: 'Request Type'
+				title: 'Request Type',
+				sortable: true
 			}, {
 				field: 'status',
-				title: 'Status'
+				title: 'Status',
+				sortable: true
 			}, {
 				field: 'operate',
 				title: 'Actions',

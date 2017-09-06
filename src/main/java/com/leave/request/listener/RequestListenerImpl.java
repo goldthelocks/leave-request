@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import com.leave.request.constants.RequestStatusEnum;
 import com.leave.request.model.LeaveRequest;
 import com.leave.request.repository.LeaveRequestRepository;
+import com.leave.request.service.NotificationService;
 import com.leave.request.util.SecurityUtil;
 
 /**
@@ -35,6 +36,9 @@ public class RequestListenerImpl implements RequestListener {
 
 	@Autowired
 	private LeaveRequestRepository leaveRequestRepository;
+	
+	@Autowired
+	private NotificationService notificationService;
 
 	@Autowired
 	private TaskService taskService;

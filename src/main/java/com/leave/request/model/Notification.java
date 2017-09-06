@@ -15,8 +15,8 @@ import javax.persistence.Table;
  *
  */
 @Entity
-@Table(name = "alert")
-public class Alert extends BaseModel {
+@Table(name = "notification")
+public class Notification extends BaseModel {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -31,7 +31,7 @@ public class Alert extends BaseModel {
 	@Column(name = "is_acknowledged")
 	private Boolean isAcknowledged;
 
-	public Alert() {
+	public Notification() {
 	}
 
 	/**

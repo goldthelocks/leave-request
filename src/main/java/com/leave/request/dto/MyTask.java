@@ -3,6 +3,7 @@
  */
 package com.leave.request.dto;
 
+import java.util.Date;
 import java.util.Map;
 
 /**
@@ -18,6 +19,7 @@ public class MyTask {
 	private String assignee;
 	private String taskDefinitionKey;
 	private Map<String, Object> processVariables;
+	private Date createTime;
 
 	public MyTask() {
 	}
@@ -127,4 +129,18 @@ public class MyTask {
 		this.processVariables = processVariables;
 	}
 
+	/**
+	 * @return the createTime
+	 */
+	public Date getCreateTime() {
+		return createTime;
+	}
+
+	/**
+	 * @param createTime the createTime to set
+	 */
+	public void setCreateTime(Date createTime) {
+		this.createTime = createTime;
+	}
+	
 }

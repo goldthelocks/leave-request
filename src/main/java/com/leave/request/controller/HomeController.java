@@ -17,12 +17,16 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import com.leave.request.model.Notification;
 import com.leave.request.model.LeaveRequest;
 import com.leave.request.model.UserModel;
+import com.leave.request.service.NotificationService;
+import com.leave.request.service.MyTaskService;
 import com.leave.request.service.RequestService;
 import com.leave.request.service.UserService;
 import com.leave.request.util.SecurityUtil;
 import com.leave.request.validator.UserValidator;
+import com.mysql.jdbc.Security;
 
 /**
  * @author Eraine
@@ -42,12 +46,25 @@ public class HomeController {
 	@Autowired
 	private RequestService requestService;
 	
+	@Autowired
+	private MyTaskService taskService;
+	
+	@Autowired
+	private NotificationService alertService;
+	
 	@GetMapping(value = {"/", "/home"})
 	public String home(@ModelAttribute("error") String error, @ModelAttribute("requestReviewed") String requestReviewed,
 			Model model) {
 		model.addAttribute("user", SecurityUtil.getUsername());
 		model.addAttribute("error", error);
 		model.addAttribute("requestReviewed", requestReviewed);
+		
+		Integer count = taskService.findAllTasksByUsername(SecurityUtil.getUsername()).size();
+		model.addAttribute("count", count);
+		
+		List<Notification> notifications = alertService.findAllByUsername(SecurityUtil.getUsername());
+		model.addAttribute("notifications", notifications);
+		
 		return "index";
 	}
 

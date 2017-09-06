@@ -77,6 +77,7 @@ public class MyTaskServiceImpl implements MyTaskService {
 		myTask.setAssignee(task.getAssignee());
 		myTask.setTaskDefinitionKey(task.getTaskDefinitionKey());
 		myTask.setProcessVariables(task.getProcessVariables());
+		myTask.setCreateTime(task.getCreateTime());
 		return myTask;
 	}
 
