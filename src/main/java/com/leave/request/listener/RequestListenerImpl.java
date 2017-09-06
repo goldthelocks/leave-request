@@ -54,17 +54,17 @@ public class RequestListenerImpl implements RequestListener {
 
 		Map<String, Object> variables = task.getVariables();
 		String reviewer = (String) variables.get("reviewer");
-		logger.info("reviewer: {} ", reviewer);
+		logger.debug("reviewer: {} ", reviewer);
 
 		// if reviewer exists, set the assignee
 		if (StringUtils.isNotBlank(reviewer)) {
-			logger.info("reviewer exists!");
+			logger.debug("reviewer exists!");
 			User user = identityService.createUserQuery().userId(reviewer).singleResult();
 			taskService.claim(task.getId(), user.getId());
 		}
 
 		// update the status
-		logger.info("update status...");
+		logger.debug("update status...");
 		LeaveRequest leaveRequest = leaveRequestRepository.findOne(Long.valueOf(strLeaveId));
 		leaveRequest.setStatus(RequestStatusEnum.TEAM_LEAD_REVIEW.getValue());
 		leaveRequest.setReviewedBy(SecurityUtil.getUsername());
@@ -80,10 +80,10 @@ public class RequestListenerImpl implements RequestListener {
 		// reviewed it
 		Map<String, Object> variables = task.getVariables();
 		String reviewer = (String) variables.get("reviewer");
-		logger.info("reviewer: {}", reviewer);
+		logger.debug("reviewer: {}", reviewer);
 
 		if (StringUtils.isBlank(reviewer)) {
-			logger.info("reviewer is blank, assign to current user");
+			logger.debug("reviewer is blank, assign to current user");
 			variables.put("reviewer", SecurityUtil.getUsername());
 
 			taskService.setVariables(task.getId(), variables);
@@ -101,7 +101,7 @@ public class RequestListenerImpl implements RequestListener {
 		String strLeaveId = processInstance.getBusinessKey();
 
 		// update the status
-		logger.info("update status...");
+		logger.debug("update status...");
 		LeaveRequest leaveRequest = leaveRequestRepository.findOne(Long.valueOf(strLeaveId));
 		leaveRequest.setStatus(RequestStatusEnum.MANAGER_REVIEW.getValue());
 		leaveRequest.setReviewedBy(SecurityUtil.getUsername());
