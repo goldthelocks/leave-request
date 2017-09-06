@@ -6,6 +6,7 @@ package com.leave.request.service;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -97,7 +98,7 @@ public class MyTaskServiceImpl implements MyTaskService {
 			historyTaskList.add(myHistoryTask);
 		}
 		
-//		sort(historyTaskList);
+		sort(historyTaskList);
 		return historyTaskList;
 	}
 	
@@ -119,7 +120,13 @@ public class MyTaskServiceImpl implements MyTaskService {
 
 			@Override
 			public int compare(MyHistoryTask o1, MyHistoryTask o2) {
-				return o1.getDateCompleted().compareTo(o2.getDateCompleted());
+			    if (o1.getDateCompleted() == null) {
+			        return (o2.getDateCompleted() == null) ? 0 : -1;
+			    }
+			    if (o2.getDateCompleted() == null) {
+			        return 1;
+			    }
+			    return o2.getDateCompleted().compareTo(o1.getDateCompleted());
 			}
 			
 		});
