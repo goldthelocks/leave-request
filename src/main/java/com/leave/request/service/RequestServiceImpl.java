@@ -59,7 +59,7 @@ public class RequestServiceImpl implements RequestService {
 	@Override
 	public void submit(LeaveRequest leaveRequest) {
 		Deployment deployment = repositoryService.createDeployment()
-				.addClasspathResource("processes/emp_leave_workflow.bpmn20.xml").deploy();
+				.addClasspathResource("processes/employee_leave_workflow.bpmn20.xml").deploy();
 		ProcessDefinition processDefinition = repositoryService.createProcessDefinitionQuery()
 				.deploymentId(deployment.getId()).singleResult();
 
