@@ -6,7 +6,6 @@ package com.leave.request.service;
 import java.util.List;
 
 import org.flowable.engine.delegate.DelegateExecution;
-import org.flowable.engine.runtime.Execution;
 
 import com.leave.request.dto.RequestApprovalDto;
 import com.leave.request.model.LeaveRequest;
@@ -24,17 +23,9 @@ public interface RequestService {
 	void save(LeaveRequest leaveRequest);
 	
 	void submit(LeaveRequest leaveRequest);
-	
-	void teamLeadReview(Execution execution);
-	
-	void managerReview(Execution execution);
-	
+
 	void sendAlert(DelegateExecution execution);
 	
 	void approveOrReject(RequestApprovalDto requestApprovalDto);
-	
-	void logApprove(DelegateExecution execution);
-	
-	void logReject(DelegateExecution execution);
 	
 }

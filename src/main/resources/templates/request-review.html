@@ -83,8 +83,8 @@
                         								<textarea class="form-control" placeholder="Input comment" th:field="*{comment}"></textarea>
                         							</div>
                         							
-                        							<input type="hidden" th:value="${taskId}" th:field="*{taskId}"/>
-                        							<input type="hidden" th:value="${leaveRequest.id}" th:field="*{leaveId}"/>
+                        							<input type="text" th:value="${taskId}" th:field="*{taskId}"/>
+                        							<input type="text" th:value="${leaveRequest.id}" th:field="*{leaveId}"/>
                         							
                         							<button type="submit" name="action" value="approve" class="btn btn-primary"><span>Approve</span></button>
 													<button type="submit" name="action" value="reject" class="btn btn-primary"><span>Reject</span></button>

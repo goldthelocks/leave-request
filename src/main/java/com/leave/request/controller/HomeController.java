@@ -17,10 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import com.leave.request.dto.MyTask;
 import com.leave.request.model.LeaveRequest;
 import com.leave.request.model.UserModel;
-import com.leave.request.service.MyTaskService;
 import com.leave.request.service.RequestService;
 import com.leave.request.service.UserService;
 import com.leave.request.util.SecurityUtil;
@@ -83,7 +81,7 @@ public class HomeController {
 		
 		userService.register(userModel);
 
-		return "redirect:/home";
+		return "register";
 	}
 	
 	@GetMapping("/json/get-all-request")

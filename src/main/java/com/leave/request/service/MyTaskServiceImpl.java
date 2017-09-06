@@ -97,7 +97,7 @@ public class MyTaskServiceImpl implements MyTaskService {
 			historyTaskList.add(myHistoryTask);
 		}
 		
-		sort(historyTaskList);
+//		sort(historyTaskList);
 		return historyTaskList;
 	}
 	

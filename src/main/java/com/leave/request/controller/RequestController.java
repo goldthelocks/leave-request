@@ -106,10 +106,7 @@ public class RequestController {
 
 	@PostMapping(value = "/review/submit", params = "action=approve")
 	public String processApproveRequest(@ModelAttribute("requestApprovalForm") RequestApprovalDto requestApprovalDto,
-			BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
-		logger.info("+++approve request+++");
-		logger.info("+++form: " + requestApprovalDto.toString());
-		
+			BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {		
 		requestApprovalDto.setIsApproved(true);
 		requestService.approveOrReject(requestApprovalDto);
 		redirectAttributes.addFlashAttribute("requestReviewed", "Done! Request has been approved.");
@@ -120,8 +117,7 @@ public class RequestController {
 	@PostMapping(value = "/review/submit", params = "action=reject")
 	public String processRejectRequest(@ModelAttribute("requestApprovalForm") RequestApprovalDto requestApprovalDto,
 			BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes) {
-		logger.info("+++reject request+++");
-		
+
 		requestApprovalDto.setIsApproved(false);
 		requestService.approveOrReject(requestApprovalDto);
 		redirectAttributes.addFlashAttribute("requestReviewed", "Done! Request has been rejected.");
