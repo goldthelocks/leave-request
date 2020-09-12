@@ -31,7 +31,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<thymeleaf.version>3.0.2.RELEASE</thymeleaf.version>
+		<thymeleaf.version>3.0.11.RELEASE</thymeleaf.version>
 		<thymeleaf.extras.springsecurity4.version>3.0.1.RELEASE</thymeleaf.extras.springsecurity4.version>
 		<flowable.version>6.1.2</flowable.version>
 		<jquery.version>3.2.1</jquery.version>
