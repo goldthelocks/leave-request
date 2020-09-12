@@ -38,7 +38,7 @@
 		<bootstrap.version>3.3.7</bootstrap.version>
 		<select2.version>4.0.3</select2.version>
 		<datepicker.version>1.7.1</datepicker.version>
-		<bootstrap-table.version>1.9.1</bootstrap-table.version>
+		<bootstrap-table.version>1.16.0</bootstrap-table.version>
 		<momentjs.version>2.18.1</momentjs.version>
 	</properties>
 
