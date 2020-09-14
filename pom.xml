@@ -34,7 +34,7 @@
 		<thymeleaf.version>3.0.2.RELEASE</thymeleaf.version>
 		<thymeleaf.extras.springsecurity4.version>3.0.1.RELEASE</thymeleaf.extras.springsecurity4.version>
 		<flowable.version>6.1.2</flowable.version>
-		<jquery.version>3.2.1</jquery.version>
+		<jquery.version>3.5.1</jquery.version>
 		<bootstrap.version>3.3.7</bootstrap.version>
 		<select2.version>4.0.3</select2.version>
 		<datepicker.version>1.7.1</datepicker.version>
